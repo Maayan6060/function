@@ -2,6 +2,7 @@ import streamlit as st
 import sympy as s
 from sympy import symbols, S, oo, limit
 from sympy.calculus.util import continuous_domain
+import numpy as np
 
 class AnalyzeApp:
     def __init__(self):
@@ -24,15 +25,23 @@ class AnalyzeApp:
             lim_right_val = yf.subs(x, lim_right)
             if abs(lim_left_val) > 1e6 or abs(lim_right_val) > 1e6:
                 va.append(i)
-        st.write("Vertical asymptotes:", va)
+        st.write("Vertical asymptotes: "+"x=",str(va))
         self.horizontal_asymptote(yf, D, x)
 
     def horizontal_asymptote(self, yf, D, x):
-        st.write("Horizontal asymptotes")
         oo_limit = limit(yf, x, oo)
-        negative_oo_limit = limit(yf, x, -oo)
-        st.write(f"Limit as x approaches infinity: {oo_limit}")
-        st.write(f"Limit as x approaches negative infinity: {negative_oo_limit}")
+        st.write("Horizontal asymptotes: "+"y=",str(oo_limit))
+        self.xyi(x,yf,D)
+    def xyi(self,x,yf,D):
+        xi=s.Eq(yf,0)
+        xix=s.solve(xi,x)
+        for i in range(len(xix)):
+         xix[i]="("+str(xix[i])+",0)"
+        yi=yf.subs(x,0)
+        if s.S.Zero in D:
+         yi="(0,"+str(yi)+")"
+         xix.append(str(yi))
+        st.write("Intersection with the axes: ", str(xix))
 
     def run(self):
         st.title("Function Analyzing App")
